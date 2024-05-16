@@ -1,6 +1,7 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import './App.css';
 import SearchIcon from './Search.svg';
+import MovieCard from "./MovieCard";
 
 
 //4fe7984a
@@ -20,12 +21,15 @@ const movie1 =
 
 
 const App = () => {
-
+  const [movies, setMovies] = useState([]); 
+  const [searchTerm, setSearchTerm ] = useState('');
+ 
 
   
 const searchMovies = async (title) => {
   const response = await fetch(`${API_URL}&s=${title}`); // Removed curly braces around title
   const data = await response.json();
+  setMovies(data.Search);
   console.log(data.Search);
 }
 
@@ -44,35 +48,37 @@ useEffect( () => {
 
       <div className="search">
         <input placeholder = 'search for movies'
-        value='superman'
-        onChange={() => {}} 
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)} 
         />
         <img src={SearchIcon}
          alt="search-icon"
-         onClick={() => {}} />
+         onClick={() => searchMovies(searchTerm)} />
       </div>
 
-
-      <div className="container">
-        <div className="movie">
-          <div>
-            <p> {movie1.Year}</p>
-          </div>
-
-          <div>
-          <img src={movie1.Poster !== 'N/A' ? movie1.Poster : 'https://via.placeholder.com/400'} alt={movie1.title} />
-
-          </div>
-
-
-
-
-        </div>
+      {
+        movies?.length > 0 ? (
+          <div className="container">
+        {
+          movies.map((movie) =>
+             ( <MovieCard movie={movie}/>) )
+        }
+        
 
 
 
 
       </div>
+
+        ) : (
+          <div className="empty">
+            <h2>No movies found</h2>
+          </div>
+        )
+      }
+
+
+      
 
 
     </div>
